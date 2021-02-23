@@ -47,6 +47,41 @@ All supported events should be accessible from the numpad by utilising numlock t
 | CHAN+       | page up      |
 | CHAN-       | page down    |
 
+## Tuner FTDI module configuration utility
+This utility allows FTDI FT2232H modules to be configured to the various configurations required for the Ryde receiver.
+### Install
+
+Install packaged dependencies:
+
+```sudo apt-get install python3-urwid```
+
+Install pip dependencies:
+
+```pip install pyftdi```
+
+### Usage
+
+```
+usage: python3 ftdiconf.py [-h] [-u] [-x]
+
+Tuner FTDI module configuration utility
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -u, --update         Enable actual updates
+  -x, --extra-configs  Allow flashing of all identifyable configs
+```
+
+### Interface
+
+All navigation can be done with the keyboard arrow keys as well as a mouse on some platforms.
+
+Modules can be selected either individually from the list or by using the various multi select options.
+
+By default all programming operations are dry runs and no changes are saved to the flash, the -u option at startup is required to enable live updates.
+
+The -x option allows all identifyable complete configs to be flashed rather than just the expected targets, this allows modules to be reverted to a factory setting if required.
+
 ## License
 
 Ryde Utils provides a set of useful utilities for the Ryde Receiver project.
