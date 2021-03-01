@@ -42,7 +42,7 @@ class ModuleBaseRAW(enum.Enum):
 
 # enum of known module configs
 class ModuleConfigs(enum.Enum):
-    UNKNOWN = (enum.auto(), frozenset(), False, False, None)
+    UNKNOWN = (enum.auto(), frozenset(), False, False, False, None)
     GENERAL = (enum.auto(), frozenset([
         ('channel_a_type', 'UART'),
         ('chip', 86),
@@ -66,7 +66,7 @@ class ModuleConfigs(enum.Enum):
         ('suspend_pull_down', False),
         ('type', 1792),
         ('vendor_id', 1027)
-    ]), False, False, None)
+    ]), False, False, False, None)
     TUNER = (enum.auto(), GENERAL[1] | frozenset([
         ('channel_a_driver', 'D2XX'),
         ('channel_b_type', 'FIFO'),
@@ -75,7 +75,7 @@ class ModuleConfigs(enum.Enum):
         ('channel_b_driver', 'D2XX'),
         ('usb_version', 13107),
         ('power_max', 0)
-    ]), False, False, ModuleBaseRAW.TUNER)
+    ]), False, False, False, ModuleBaseRAW.TUNER)
     FACTORY = (enum.auto(), GENERAL[1] | frozenset([
         ('channel_a_driver', 'VCP'),
         ('channel_b_driver', 'VCP'),
@@ -85,18 +85,22 @@ class ModuleConfigs(enum.Enum):
         ('remote_wakeup', True),
         ('self_powered', False),
         ('usb_version', 4369),
-    ]), True, False, ModuleBaseRAW.FACTORY)
+    ]), True, False, True, ModuleBaseRAW.FACTORY)
     MINITIOUNER = (enum.auto(), TUNER[1] | frozenset([
         ('product', 'USB <-> NIM tuner'),
-    ]), True, True, ModuleBaseRAW.TUNER)
+    ]), True, True, True, ModuleBaseRAW.TUNER)
+    MINITIOUNEREXPRESS = (enum.auto(), TUNER[1] | frozenset([
+        ('product', 'MiniTiouner-Express'),
+    ]), True, False, False, ModuleBaseRAW.TUNER)
     KNUCKER = (enum.auto(), TUNER[1] | frozenset([
         ('product', 'CombiTuner-Express'),
-    ]), True, True, ModuleBaseRAW.TUNER)
+    ]), True, True, True, ModuleBaseRAW.TUNER)
     
-    def __init__(self, enum, configset, canIdentify, canFlash, rawBaseline):
+    def __init__(self, enum, configset, canIdentify, flashableConfig, flashableDevice, rawBaseline):
         self._configset = configset
         self._canIdentify = canIdentify
-        self._canFlash = canFlash
+        self._flashableConfig = flashableConfig
+        self._flashableDevice = flashableDevice
         self._rawBaseline = rawBaseline
 
     @property
@@ -108,8 +112,12 @@ class ModuleConfigs(enum.Enum):
         return self._canIdentify
 
     @property
-    def canFlash(self):
-        return self._canFlash
+    def flashableConfig(self):
+        return self._flashableConfig
+
+    @property
+    def flashableDevice(self):
+        return self._flashableDevice
 
     @property
     def rawBaseline(self):
@@ -326,7 +334,7 @@ class ModuleListWidget(urwid.WidgetWrap):
                     checkBox = oldCheckBox
                     break
             if checkBox is None:
-                if configType is not ModuleConfigs.UNKNOWN:
+                if configType is not ModuleConfigs.UNKNOWN and configType.flashableDevice:
                     checkBox = ModuleCheckBox(nameStr+":"+configType.name, device, configType)
                 else:
                     checkBox = ModuleTextBox(nameStr+":"+configType.name, device, configType)
@@ -370,7 +378,7 @@ class CommandListWidget(urwid.WidgetWrap):
             dryRunText = ""
         walker = urwid.SimpleListWalker([])
         for config in ModuleConfigs:
-            if config.canIdentify:
+            if config.canIdentify and config.flashableDevice:
                 walker.contents.append(urwid.Button('Select all '+config.name, on_press=self.moduleList.selectAll, user_data=config))
         
         selectGroupButtons = [
@@ -382,7 +390,7 @@ class CommandListWidget(urwid.WidgetWrap):
         walker.contents.extend(selectGroupButtons)
 
         for config in ModuleConfigs:
-            if config.canFlash or (allowAllConfigs and config.canIdentify):
+            if (config.flashableConfig or (allowAllConfigs and config.canIdentify)) and config.flashableDevice:
                 walker.contents.append(urwid.Button(dryRunText+'Program as '+config.name, on_press=self.scanAndConfirmProgram, user_data=config ))
 
         genButtons = [
