@@ -313,8 +313,9 @@ class ModulesInterface(object):
 
 # UI widget that displays a list of found modules and manages their selection
 class ModuleListWidget(urwid.WidgetWrap):
-    def __init__(self, ftdiInterface):
+    def __init__(self, ftdiInterface, attemptIdentUnknown):
         self.ftdiInterface = ftdiInterface
+        self.attemptIdentUnknown = attemptIdentUnknown
         self.walker = urwid.SimpleListWalker([])
         self.updateModuleCheckBoxes(None)
         urwid.WidgetWrap.__init__(self, urwid.ListBox(self.walker))
@@ -337,7 +338,27 @@ class ModuleListWidget(urwid.WidgetWrap):
                 if configType is not ModuleConfigs.UNKNOWN and configType.flashableDevice:
                     checkBox = ModuleCheckBox(nameStr+":"+configType.name, device, configType)
                 else:
-                    checkBox = ModuleTextBox(nameStr+":"+configType.name, device, configType)
+                    if self.attemptIdentUnknown and configType is ModuleConfigs.UNKNOWN:
+                        # attempt partial idenfication of module
+                        # find stored config with largest intersection with this module
+                        identString = "partial("
+                        closestModule = ModuleConfigs.UNKNOWN
+                        closestInCommon = set()
+                        for config in ModuleConfigs:
+                            inCommon = devices[device] & config.configSet
+                            if len(inCommon) > len(closestInCommon):
+                                closestInCommon = inCommon
+                                closestModule = config
+                        identString += closestModule.name+"+{"
+                        settingPairStrings = []
+                        # print difference between module and closest config
+                        for settingPair in (devices[device]-closestInCommon):
+                            settingPairStrings.append(settingPair[0]+":"+repr(settingPair[1]))
+                        identString += ','.join(settingPairStrings)
+                        identString += "})"
+                    else:
+                        identString = configType.name
+                    checkBox = ModuleTextBox(nameStr+":"+identString, device, configType)
 
             buttons.append(checkBox)
         self.walker[:]=buttons
@@ -431,7 +452,7 @@ class CommandListWidget(urwid.WidgetWrap):
 
 
 class TunerFTDIConfigUtil(object):
-    def __init__(self, dryRun=True, allowAllConfigs=False):
+    def __init__(self, dryRun=True, allowAllConfigs=False, attemptIdentUnknown=False):
         colsBox = urwid.Columns([], 1)
         titlebox = urwid.AttrMap(urwid.Text('Tuner FTDI module configuration utility', align='center'), 'title')
         footerbox = urwid.AttrMap(urwid.Text(["To navigate use the keyboard or the mouse on compatible consoles"]), 'footer')
@@ -458,7 +479,7 @@ class TunerFTDIConfigUtil(object):
         self.loop = urwid.MainLoop(top, palette=pallette)
 
         ftdiInterface = ModulesInterface(dryRun)
-        moduleList = ModuleListWidget(ftdiInterface)
+        moduleList = ModuleListWidget(ftdiInterface, attemptIdentUnknown)
 
         commandList = CommandListWidget(ftdiInterface, moduleList, self.loop, allowAllConfigs, dryRun)
 
@@ -472,6 +493,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Tuner FTDI module configuration utility")
     parser.add_argument("-u", "--update", action="store_true", help="Enable actual updates")
     parser.add_argument("-x", "--extra-configs", action="store_true", help="Allow flashing of all identifyable configs")
+    parser.add_argument("-i", "--attempt-ident-unknown", action="store_true", help="Attempt to partially identify unknown modules")
     args = parser.parse_args()
-    ftdiUI = TunerFTDIConfigUtil(not args.update, args.extra_configs)
+    ftdiUI = TunerFTDIConfigUtil(not args.update, args.extra_configs, args.attempt_ident_unknown)
     ftdiUI.run()

@@ -67,9 +67,10 @@ usage: python3 ftdiconf.py [-h] [-u] [-x]
 Tuner FTDI module configuration utility
 
 optional arguments:
-  -h, --help           show this help message and exit
-  -u, --update         Enable actual updates
-  -x, --extra-configs  Allow flashing of all identifyable configs
+  -h, --help                   Show this help message and exit
+  -u, --update                 Enable actual updates
+  -x, --extra-configs          Allow flashing of all identifyable configs
+  -i, --attempt-ident-unknown  Attempt to partially identify unknown modules
 ```
 
 ### Interface
@@ -81,6 +82,8 @@ Modules can be selected either individually from the list or by using the variou
 By default all programming operations are dry runs and no changes are saved to the flash, the -u option at startup is required to enable live updates.
 
 The -x option allows all identifyable complete configs to be flashed rather than just the expected targets, this allows modules to be reverted to a factory setting if required.
+
+The -i option displays partial identification of unknown modules, this displays enough information for full detection support to be added.
 
 ## License
 
