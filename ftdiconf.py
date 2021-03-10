@@ -71,9 +71,9 @@ class ModuleConfigs(enum.Enum):
         ('channel_a_driver', 'D2XX'),
         ('channel_b_type', 'FIFO'),
         ('remote_wakeup', False),
-        ('self_powered', True),
-        ('channel_b_driver', 'D2XX'),
         ('usb_version', 13107),
+        ('channel_b_driver', 'D2XX'),
+        ('self_powered', True),
         ('power_max', 0)
     ]), False, False, False, ModuleBaseRAW.TUNER)
     FACTORY = (enum.auto(), GENERAL[1] | frozenset([
@@ -91,6 +91,15 @@ class ModuleConfigs(enum.Enum):
     ]), True, True, True, ModuleBaseRAW.TUNER)
     MINITIOUNEREXPRESS = (enum.auto(), TUNER[1] | frozenset([
         ('product', 'MiniTiouner-Express'),
+    ]), True, False, False, ModuleBaseRAW.TUNER)
+    MINITIOUNER_S = (enum.auto(), TUNER[1] | frozenset([
+        ('product', 'MiniTiouner'),
+    ]), True, False, False, ModuleBaseRAW.TUNER)
+    MINITIOUNER_PRO_TS1 = (enum.auto(), TUNER[1] | frozenset([
+        ('product', 'MiniTiouner_Pro_TS1'),
+    ]), True, False, False, ModuleBaseRAW.TUNER)
+    MINITIOUNER_PRO_TS2 = (enum.auto(), TUNER[1] | frozenset([
+        ('product', 'MiniTiouner_Pro_TS2'),
     ]), True, False, False, ModuleBaseRAW.TUNER)
     KNUCKER = (enum.auto(), TUNER[1] | frozenset([
         ('product', 'CombiTuner-Express'),
