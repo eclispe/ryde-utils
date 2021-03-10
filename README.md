@@ -23,6 +23,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -H HOST, --host HOST  network host name or address of Ryde receiver
   -P PORT, --port PORT  network port of Ryde receiver
+  -i, --instructions    start with instructions showing
 ```
 
 ### Interface

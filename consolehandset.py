@@ -57,7 +57,7 @@ class EventSnag(urwid.WidgetWrap):
 
 # Urwid widget for capturing, logging and running a callback on mapped events, also provides a help box
 class EventFrame(urwid.WidgetWrap):
-    def __init__(self, keymap, publishEventCallback, instructions):
+    def __init__(self, keymap, publishEventCallback, instructions, startWithInstructions):
         # components for the help box
         popupHeader = urwid.AttrMap(urwid.Text("Help", align='center'), 'heading')
         popupButton = urwid.Button("Close", self.closetab)
@@ -71,6 +71,8 @@ class EventFrame(urwid.WidgetWrap):
         # main parent
         self.cols = urwid.Columns([urwid.Padding(EventSnag(ListBoxRekey(self.walker), keymap, functools.partial(publishEventCallback, self.appendTxt)), left=2, right=2)])
         self.coltuple = (popupBox, self.cols.options())
+        if startWithInstructions:
+            self.cols.contents.append(self.coltuple)
         urwid.WidgetWrap.__init__(self, self.cols)
 
     # append text to the event log box includeing a timestamp
@@ -100,7 +102,7 @@ class EventFrame(urwid.WidgetWrap):
             return self.cols.keypress(size, key)
 
 class RydeConsoleHandset(object):
-    def __init__(self, host = 'localhost', port = 8765):
+    def __init__(self, host = 'localhost', port = 8765, startWithInstructions = False):
         # map of urwid events to ryde events
         keymap = {
             'up': 'UP',
@@ -137,7 +139,7 @@ class RydeConsoleHandset(object):
         instructions.append("\nNumber keys are also supported\n")
         
         # Visible UI components
-        eventBox = EventFrame(keymap, self.publishEventCallback, instructions)
+        eventBox = EventFrame(keymap, self.publishEventCallback, instructions, startWithInstructions)
         titlebox = urwid.AttrMap(urwid.Text('Ryde Network Console Handset', align='center'), 'title')
         footerbox = urwid.AttrMap(urwid.Text(["Press ",("highlight", "esc")," to exit, ",("highlight", "tab")," to show help or hold ",("highlight", "ctrl"), " to navigate the log."]), 'footer')
         # main layout frames
@@ -207,6 +209,7 @@ if __name__ == "__main__":
         
     parser.add_argument("-H", "--host", help="network host name or address of Ryde receiver", default="localhost")
     parser.add_argument("-P", "--port", help="network port of Ryde receiver", default=8765)
+    parser.add_argument("-i", "--instructions", action="store_true", help="start with instructions showing")
     args = parser.parse_args()
-    consoleHandset = RydeConsoleHandset(host = args.host, port = args.port)
+    consoleHandset = RydeConsoleHandset(host = args.host, port = args.port, startWithInstructions = args.instructions)
     consoleHandset.run()
