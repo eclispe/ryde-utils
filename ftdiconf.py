@@ -45,7 +45,6 @@ class ModuleConfigs(enum.Enum):
     UNKNOWN = (enum.auto(), frozenset(), False, False, False, None)
     GENERAL = (enum.auto(), frozenset([
         ('channel_a_type', 'UART'),
-        ('chip', 86),
         ('group_0_drive', True),
         ('group_0_schmitt', False),
         ('group_0_slew', False),
@@ -69,39 +68,44 @@ class ModuleConfigs(enum.Enum):
     ]), False, False, False, None)
     TUNER = (enum.auto(), GENERAL[1] | frozenset([
         ('channel_a_driver', 'D2XX'),
+        ('channel_b_driver', 'D2XX'),
         ('channel_b_type', 'FIFO'),
         ('remote_wakeup', False),
         ('usb_version', 13107),
-        ('channel_b_driver', 'D2XX'),
         ('self_powered', True),
         ('power_max', 0)
+    ]), False, False, False, ModuleBaseRAW.TUNER)
+    TUNER256 = (enum.auto(), TUNER[1] | frozenset([
+        ('chip', 86),
     ]), False, False, False, ModuleBaseRAW.TUNER)
     FACTORY = (enum.auto(), GENERAL[1] | frozenset([
         ('channel_a_driver', 'VCP'),
         ('channel_b_driver', 'VCP'),
         ('channel_b_type', 'UART'),
+        ('chip', 86),
         ('power_max', 150),
         ('product', 'FT2232H MiniModule'),
         ('remote_wakeup', True),
         ('self_powered', False),
         ('usb_version', 4369),
     ]), True, False, True, ModuleBaseRAW.FACTORY)
-    MINITIOUNER = (enum.auto(), TUNER[1] | frozenset([
+    MINITIOUNER = (enum.auto(), TUNER256[1] | frozenset([
         ('product', 'USB <-> NIM tuner'),
     ]), True, True, True, ModuleBaseRAW.TUNER)
     MINITIOUNEREXPRESS = (enum.auto(), TUNER[1] | frozenset([
+        ('chip', 70),
         ('product', 'MiniTiouner-Express'),
     ]), True, False, False, ModuleBaseRAW.TUNER)
-    MINITIOUNER_S = (enum.auto(), TUNER[1] | frozenset([
+    MINITIOUNER_S = (enum.auto(), TUNER256[1] | frozenset([
         ('product', 'MiniTiouner'),
     ]), True, False, False, ModuleBaseRAW.TUNER)
-    MINITIOUNER_PRO_TS1 = (enum.auto(), TUNER[1] | frozenset([
+    MINITIOUNER_PRO_TS1 = (enum.auto(), TUNER256[1] | frozenset([
         ('product', 'MiniTiouner_Pro_TS1'),
     ]), True, False, False, ModuleBaseRAW.TUNER)
-    MINITIOUNER_PRO_TS2 = (enum.auto(), TUNER[1] | frozenset([
+    MINITIOUNER_PRO_TS2 = (enum.auto(), TUNER256[1] | frozenset([
         ('product', 'MiniTiouner_Pro_TS2'),
     ]), True, False, False, ModuleBaseRAW.TUNER)
-    KNUCKER = (enum.auto(), TUNER[1] | frozenset([
+    KNUCKER = (enum.auto(), TUNER256[1] | frozenset([
         ('product', 'CombiTuner-Express'),
     ]), True, True, True, ModuleBaseRAW.TUNER)
     
