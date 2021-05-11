@@ -45,18 +45,18 @@ class ModuleConfigs(enum.Enum):
     UNKNOWN = (enum.auto(), frozenset(), False, False, False, None)
     GENERAL = (enum.auto(), frozenset([
         ('channel_a_type', 'UART'),
-        ('group_0_drive', True),
+        ('group_0_drive', 16),
         ('group_0_schmitt', False),
-        ('group_0_slew', False),
-        ('group_1_drive', True),
+        ('group_0_slow_slew', False),
+        ('group_1_drive', 16),
         ('group_1_schmitt', False),
-        ('group_1_slew', False),
-        ('group_2_drive', True),
+        ('group_1_slow_slew', False),
+        ('group_2_drive', 16),
         ('group_2_schmitt', False),
-        ('group_2_slew', False),
-        ('group_3_drive', True),
+        ('group_2_slow_slew', False),
+        ('group_3_drive', 16),
         ('group_3_schmitt', False),
-        ('group_3_slew', False),
+        ('group_3_slow_slew', False),
         ('has_serial', True),
         ('in_isochronous', False),
         ('out_isochronous', False),
@@ -71,7 +71,6 @@ class ModuleConfigs(enum.Enum):
         ('channel_b_driver', 'D2XX'),
         ('channel_b_type', 'FIFO'),
         ('remote_wakeup', False),
-        ('usb_version', 13107),
         ('self_powered', True),
         ('power_max', 0)
     ]), False, False, False, ModuleBaseRAW.TUNER)
@@ -87,7 +86,6 @@ class ModuleConfigs(enum.Enum):
         ('product', 'FT2232H MiniModule'),
         ('remote_wakeup', True),
         ('self_powered', False),
-        ('usb_version', 4369),
     ]), True, False, True, ModuleBaseRAW.FACTORY)
     MINITIOUNER = (enum.auto(), TUNER256[1] | frozenset([
         ('product', 'USB <-> NIM tuner'),
