@@ -116,6 +116,8 @@ class RydeConsoleHandset(object):
             'home': 'MUTE',
             'page up': 'CHAN+',
             'page down': 'CHAN-',
+            '+': 'VOL+',
+            '-': 'VOL-',
             '0': 'ZERO',
             '1': 'ONE',
             '2': 'TWO',
@@ -133,7 +135,7 @@ class RydeConsoleHandset(object):
         instructions.append("Press tab or left to switch away from help without closing\n\n")
         instructions.append("All supported keys should usable from just the numpad by using NumLock\n\nSupported keys:\n")
         # auto create key map instructions
-        specialkeys = ['up', 'down', 'left', 'right', 'enter', 'delete', 'insert', 'end', 'home', 'page up', 'page down']
+        specialkeys = ['up', 'down', 'left', 'right', 'enter', 'delete', 'insert', 'end', 'home', '+', '-', 'page up', 'page down']
         for keypress in specialkeys:
             instructions.append(keymap[keypress]+": "+keypress+"\n")
         instructions.append("\nNumber keys are also supported\n")
